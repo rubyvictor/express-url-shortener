@@ -16,9 +16,9 @@ const existingURLs = [
 
 app.post("/shorten-url", function(req, res) {
   const hash = encode(req.body.url, existingURLs);
-
+const idInt = parseInt(existingURLs.length);
   var newURL = {
-    id: existingURLs.length + "1",
+    id: (idInt + 1).toString(),
     url: req.body.url,
     hash: hash
   };

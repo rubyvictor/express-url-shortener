@@ -10,7 +10,7 @@ const app = express();
 app.use(bodyParser.json());
 
 const existingURLs = [
-  { id: "1", url: "www.google.com", hash: "MQ==" },
+  { id: "1", url: "https://www.google.com", hash: "MQ==" },
   { id: "2", url: "https://www.facebook.com", hash: "Mg==" }
 ];
 

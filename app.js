@@ -22,8 +22,7 @@ app.post("/shorten-url", function(req, res, next) {
       res.send({
         url: urlData,
         hash: btoa(doc._id),
-        status: 200,
-        status_text = "OK"
+        status: 200
       });
     }else {
       console.log("entry NOT FOUND in db, saving NEW");
@@ -33,8 +32,7 @@ app.post("/shorten-url", function(req, res, next) {
         res.send({
           url: urlData,
           hash: btoa(url._id),
-          status: 200,
-          status_text = "OK"
+          status: 200
         });
       });
     }

@@ -5,6 +5,8 @@ const nodeFetch = require("node-fetch");
 // load our own helper functions
 const encode = require("./demo/encode");
 const decode = require("./demo/decode");
+const Counter = require('./models/Counter');
+const Url = require('./models/Url');
 
 const app = express();
 app.use(bodyParser.json());

@@ -7,18 +7,25 @@ const mongoose = require("mongoose");
 const Counter = require('./models/Counter');
 const Url = require('./models/Url');
 
-promise = mongoose.connect(process.env.MONGODB_URI, function(err) {
+const isProduction = process.env.NODE_ENV === "production";
+
+const dbUrl = process.env.MONGODB_URI;
+promise = mongoose.connect(dbUrl, function(err) {
   if (err) throw err;
   console.log("db connected successfully");
+});
 
-  const server = app.listen(process.env.PORT || 3000, () => {
-    console.log(`Listening on port ${server.address().port}...`);
-  });
+if (!isProduction) {
+  mongoose.set("debug", true);
+}
+
+const server = app.listen(process.env.PORT || 3000, () => {
+  console.log(`Listening on port ${server.address().port}...`);
 });
 
 promise.then(function(db){
   console.log("db connected");
-  url.remove({},function(){
+  Url.remove({},function(){
     console.log("Url collection removed.");
   })
   Counter.remove({},function(){

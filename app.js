@@ -77,16 +77,20 @@ app.delete("/urls/:hash", function(req, res) {
   }
 });
 
-app.get("/:someHash", function(req, res) {
+app.get("/:hash", function(req, res) {
   try {
-    const url = decode(req.params.someHash, existingURLs);
-    if (url) {
-      res.status(301).redirect(url);
-      res.send("redirecting to url");
-    }
+    const hash = req.params.hash;
+    const id = atob(hash);
+    Url.findOne({_id:id},function(err,doc){
+      if (doc) {
+        res.status(301).redirect(doc.url);
+      } else {
+        res.redirect('/');
+      }
+    });
   } catch (error) {
     res.status(404).send({
-      message: `URL with hash value = ${req.params.someHash} does not exist`
+      message: `URL with hash value = ${hash} does not exist`
     });
   }
 });

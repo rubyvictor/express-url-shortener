@@ -5,36 +5,47 @@ const nodeFetch = require("node-fetch");
 // load our own helper functions
 const encode = require("./demo/encode");
 const decode = require("./demo/decode");
-const Counter = require('./models/Counter');
-const Url = require('./models/Url');
+const Counter = require("./models/Counter");
+const Url = require("./models/Url");
+const btoa = require("btoa");
+const atob = require("atob");
 
 const app = express();
 app.use(bodyParser.json());
 
-const existingURLs = [
-  { id: "1", url: "https://www.google.com", hash: "MQ==" },
-  { id: "2", url: "https://www.facebook.com", hash: "Mg==" }
-];
+app.post("/shorten-url", function(req, res, next) {
+  console.log(req.body.url);
+  const urlData = req.body.url;
+  Url.findOne({url:urlData}, function(err,doc){
+    if(doc){
+      console.log("entry found in db");
+      res.send({
+        url: urlData,
+        hash: btoa(doc._id),
+        status: 200,
+        status_text = "OK"
+      });
+    }else {
+      console.log("entry NOT FOUND in db, saving NEW");
+      const url = new Url({url: urlData});
+      url.save(function(err){
+        if(err) return console.error(err);
+        res.send({
+          url: urlData,
+          hash: btoa(url._id),
+          status: 200,
+          status_text = "OK"
+        });
+      });
+    }
 
-app.post("/shorten-url", function(req, res) {
-  const hash = encode(req.body.url, existingURLs);
-const idInt = parseInt(existingURLs.length);
-  var newURL = {
-    id: (idInt + 1).toString(),
-    url: req.body.url,
-    hash: hash
-  };
-
-  console.log(hash);
-  existingURLs.push(newURL);
-  res.send(hash);
+  })
 });
 
-// TODO: Implement functionalities specified in README
 app.get("/expand-url/:hash", function(req, res) {
   try {
     const url = decode(req.params.hash, existingURLs);
-    
+
     if (url) {
       res.send({ url: url });
     }
@@ -79,9 +90,6 @@ app.get("/:someHash", function(req, res) {
     });
   }
 });
-
-
-
 
 app.get("/", function(req, res) {
   res.send({ existingURLs });
